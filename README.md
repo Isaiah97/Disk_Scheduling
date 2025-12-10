@@ -20,11 +20,3 @@ Assignment:
 a sequence of m-1 integers, where each index value t is a request to seek track t.
  Each scheduling algorithm generates an ordering according to which the m-1 requests are
 serviced from the starting track, and calculates the distance of the tracks traversed.
-What NOT to do (any violation will result in an automatic score of 0 on the assignment):
- Do NOT modify the choice values (1,2,3,4,5,6) or input characters and then try to convert
-them to integers--the test script used for grading your assignment will not work correctly.
- Do NOT turn in an alternate version of the assignment downloaded from the Internet
-(coursehero, chegg, reddit, github, ChatGPT, etc.) or submitted from you or another
-student from a previous semester.
- Do NOT turn in your assignment coded in another programming language (C++, C#,
-Java).
