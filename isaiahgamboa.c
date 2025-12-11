@@ -45,6 +45,10 @@ for (i = 0; i < num_requests; i++) {
 // FIFO logic
 
 int fifo_distance(void){
+	int total_distance = 0;
+	int current = start_track;
+	int i;
+
 	
 }
 
