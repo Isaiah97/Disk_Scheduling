@@ -36,7 +36,7 @@ int fifo(int start, int *req, int m, int *order) {
 int sstf(int start, int *req, int m, int *order) {
     int n = m - 1;   // number of requests
     int *visited = (int *)calloc(n, sizeof(int));
-    int i, 
+    int i;
     int k;
     int current = start;
     int total = 0;
@@ -56,7 +56,7 @@ int sstf(int start, int *req, int m, int *order) {
 
         for (i = 0; i < n; i++) {
             if (!visited[i]) {
-                int d = my_abs(req[i] - current);
+                int d = abs(req[i] - current);
                 if (d < best_dist) {
                     best_dist = d;
                     best_index = i;
@@ -226,7 +226,7 @@ int cscan_alg(int start, int *req, int m, int *order, int direction_up) {
     total += abs(start - 0);
 
     for (i = 0; i < m - 1; i++) {
-        total += my_abs(order[i + 1] - order[i]);
+        total += abs(order[i + 1] - order[i]);
     }
 
     free(sorted);
