@@ -11,8 +11,8 @@ int abs(int x) {
     return (x < 0) ? -x : x;
 }
 
-/* ---------- FIFO ---------- */
-/* FIFO just follows the input order: start, then the sequence as given. */
+//---------- FIFO ---------- 
+// FIFO just follows the input order: start, then the sequence as given. 
 int fifo(int start, int *req, int m, int *order) {
     int i;
     int total = 0;
@@ -31,8 +31,8 @@ int fifo(int start, int *req, int m, int *order) {
     return total;
 }
 
-/* ---------- SSTF ---------- */
-/* At each step, go to the closest unvisited request. */
+//SSTF algo
+//At each step, go to the closest unvisited request.
 int sstf(int start, int *req, int m, int *order) {
     int n = m - 1;   // number of requests
     int *visited = (int *)calloc(n, sizeof(int));
@@ -74,7 +74,7 @@ int sstf(int start, int *req, int m, int *order) {
     return total;
 }
 
-/* ---------- Sorting helper for SCAN / C-SCAN ---------- */
+//Sorting helper for SCAN / C-SCAN
 
 void swap_int(int *a, int *b) {
     int tmp = *a;
@@ -95,7 +95,6 @@ void sort_array(int *arr, int n) {
     }
 }
 
-/* ---------- SCAN ---------- */
 /*
  * We treat SCAN as:
  * - sort the requests
@@ -123,7 +122,7 @@ int scan_alg(int start, int *req, int m, int *order, int direction_up) {
     }
     sort_array(sorted, n);
 
-    /* find first index with track >= start */
+    // find first index with track >= start
     int split = n;
     for (i = 0; i < n; i++) {
         if (sorted[i] >= start) {
@@ -135,29 +134,29 @@ int scan_alg(int start, int *req, int m, int *order, int direction_up) {
     order[0] = start;
 
     if (direction_up) {
-        /* go up first: from split..n-1 */
+        // go up first: from split..n-1
         for (i = split; i < n; i++) {
             order[k++] = sorted[i];
         }
 
-        /* then go down: from split-1..0 */
+        // then go down: from split-1..0
         for (i = split - 1; i >= 0; i--) {
             order[k++] = sorted[i];
         }
 
     } else {
-        /* go down first: split-1..0 */
+        // go down first: split-1..0
         for (i = split - 1; i >= 0; i--) {
             order[k++] = sorted[i];
         }
 
-        /* then go up: split..n-1 */
+        // then go up: split..n-1
         for (i = split; i < n; i++) {
             order[k++] = sorted[i];
         }
     }
 
-    /* compute total distance */
+    // compute total distance
     total += abs(start - 0);
     for (i = 0; i < m - 1; i++) {
         total += abs(order[i + 1] - order[i]);
@@ -167,7 +166,7 @@ int scan_alg(int start, int *req, int m, int *order, int direction_up) {
     return total;
 }
 
-/* ---------- C-SCAN ---------- */
+//C-SCAN 
 /*
  * C-SCAN:
  * - sort the requests
@@ -203,21 +202,21 @@ int cscan_alg(int start, int *req, int m, int *order, int direction_up) {
 
     order[0] = start;
     if (direction_up) {
-        /* first: from split..n-1 (upward) */
+        // first: from split..n-1 (upward)
         for (i = split; i < n; i++) {
             order[k++] = sorted[i];
         }
-        /* then wrap: from 0..split-1 (upward) */
+        // then wrap: from 0..split-1 (upward)
         for (i = 0; i < split; i++) {
             order[k++] = sorted[i];
         }
 
     } else {
-        /* first: from split-1..0 (downward) */
+        // first: from split-1..0 (downward)
         for (i = split - 1; i >= 0; i--) {
             order[k++] = sorted[i];
         }
-        /* then wrap: from n-1..split (downward) */
+        // then wrap: from n-1..split (downward)
         for (i = n - 1; i >= split; i--) {
             order[k++] = sorted[i];
         }
@@ -232,7 +231,7 @@ int cscan_alg(int start, int *req, int m, int *order, int direction_up) {
     return total;
 }
 
-/* ---------- Main / Menu Logic ---------- */
+// Main / Menu Logic
 
 void print_menu(void) {
     printf("\nDisk scheduling\n");
@@ -311,7 +310,7 @@ int main(void) {
                 dist = cscan_alg(start, requests, seq_size, order, direction);
             }
 
-            /* common printing for all algorithms 2–5 */
+            //universal for all inputs.
             printf("Traversed sequence: ");
             for (i = 0; i < seq_size; i++) {
                 printf("%d", order[i]);
