@@ -119,6 +119,20 @@ int scan_distance (int direction_up) {
 		temp[i] = requests[i];
 	}
 	sort_array(temp, num_requests);
+
+	//start_track must equal first request
+
+	split = num_requests;
+	for (i = 0; i < num_requests; i++) {
+		if (temp[i] >= start_track) {
+			split = i;
+			break;
+		}
+	}
+
+	if (direction_up) {
+		//moves up
+	}
 }
 
 
