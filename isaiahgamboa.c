@@ -69,6 +69,26 @@ int sstf_distance(void) {
 	int current = start_track;
 	int i;
 
+	while (visited_count < num_requests) {
+		int best_index = -1;
+		int best_dist = INT_MAX;
+
+		fot (i = 0; i < num_requests; i++) {
+			if (!visited[i]) {
+				int dist = abs(requests[i] - current);
+				if (dist < best_dist) {
+					best_dist = dist;
+					best_index = i;
+				}
+			}
+		}
+
+		total_distance += dist;
+		current = requests[best_index];
+		visited[best_index] = 1;
+		visited_count++;
+	}
+
 	visited = (int *)calloc(num_requests, sizeof(int));
 	if (visited == NULL) {
 		printf("Error: failure to allocate memory for SSTF");
