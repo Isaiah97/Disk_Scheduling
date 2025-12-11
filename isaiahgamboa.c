@@ -23,6 +23,18 @@ void swap_int(int *a, int *b) {
 	*b = tmp;
 }
 
+void sort_array(int *arr, int n) {
+	int i;
+	int j;
+
+	for (i = 0; i < n - 1; i++) {
+		for (j = 0; j < n - 1 - i; j++) {
+			if (arr[j] > arr[j + 1]) {
+				swap_int(&arr[j], &arr[j + 1]);
+			}
+		}
+	}
+}
 
 //formatting the parameters for the assignment
 
