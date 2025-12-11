@@ -184,6 +184,24 @@ int scan_distance (int direction_up) {
 void enter_params(void) {
 	int i;
 	int track;
+
+	printf("\nEnter disk size (number of tracks): ");
+	printf("%d", &disk_size);
+
+	if (disk_size <= 0){
+		printf("Disk size must be positive.\n");
+		params_set = 0;
+		return;
+	}
+
+	
+
+	// freeing older requests
+	if (requests != NULL) {
+		free(requests);
+		requests = NULL;
+	}
+
 }
 
 
