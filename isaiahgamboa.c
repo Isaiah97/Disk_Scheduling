@@ -155,6 +155,8 @@ int scan_alg(int start, int *req, int m, int *order, int direction_up) {
         }
     }
 
+    total += abs(start - 0);
+
     /* compute total distance */
     for (i = 0; i < m - 1; i++) {
         total += abs(order[i + 1] - order[i]);
@@ -307,15 +309,11 @@ int main(void) {
                 dist = scan_alg(start, requests, seq_size, order, direction);
             } 
             else if (choice == 5) {
-                printf("Enter starting track: ");
+                printf("Enter initial direction: (0=decreasing, 1=increasing): ");
                 scanf("%d", &direction);
                 dist = cscan_alg(start, requests, seq_size, order, direction);
-  
-            printf("Enter sequence of tracks to seek: ");
-            for (i = 0; i < n; i++) {
-                scanf("%d", &requests[i]);
             }
-
+            /* common printing for all algorithms 2–5 */
             printf("Traversed sequence: ");
             for (i = 0; i < seq_size; i++) {
                 printf("%d", order[i]);
@@ -326,7 +324,6 @@ int main(void) {
 
             free(requests);
             free(order);
-        	}
         } 
         else if (choice == 6) {
             printf("Quitting program...\n");
