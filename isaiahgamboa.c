@@ -132,6 +132,12 @@ int scan_distance (int direction_up) {
 
 	if (direction_up) {
 		//moves up
+		for (i = split; i < num_requests; i++) {
+			total_distance += abs(temp[i] - current);
+			current = temp[i];
+		}
+
+		//reverse if requests are too low.
 	}
 }
 
