@@ -44,7 +44,7 @@ for (i = 0; i < num_requests; i++) {
 	printf("\n------------------------\n");
 }
 
-// FIFO logic
+// FIFO distance logic
 
 int fifo_distance(void){
 	int total_distance = 0;
@@ -60,7 +60,7 @@ int fifo_distance(void){
 }
 
 
-
+// SSTF distance logic
 
 
 
