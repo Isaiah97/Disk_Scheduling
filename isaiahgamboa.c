@@ -62,6 +62,15 @@ int fifo_distance(void){
 
 // SSTF distance logic
 
+int sstf_distance(void) {
+	int *visited = NULL;
+	int visited_count = 0;
+	int total_distance = 0;
+	int current = start_track;
+	int i;
+
+	
+}
 
 
 
