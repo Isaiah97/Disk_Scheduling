@@ -382,7 +382,7 @@ int main(void) {
 
         switch (choice) {
             case 1:
-                enter_parameters();
+                enter_params();
                 break;
 
             case 2:
