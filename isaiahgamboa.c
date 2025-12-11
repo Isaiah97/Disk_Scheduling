@@ -10,3 +10,5 @@ int start_track = 0;		// Starting position of the disk head
 int *requests = NULL;		// Dynamic array of track requests
 int params_set = 0;			// Flag: have we entered parameters yet?
 
+
+//helpers that are necessary for the project
