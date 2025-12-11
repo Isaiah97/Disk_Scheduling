@@ -311,7 +311,7 @@ int main(void) {
                 scanf("%d", &direction);
                 dist = cscan_alg(start, requests, seq_size, order, direction);
   
-            printf("Enter sequence of tracks to seek: ")
+            printf("Enter sequence of tracks to seek: ");
             for (i = 0; i < n; i++) {
                 scanf("%d", &requests[i]);
             }
