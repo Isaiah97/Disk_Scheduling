@@ -83,7 +83,9 @@ void swap_int(int *a, int *b) {
 }
 
 void sort_array(int *arr, int n) {
-    int i, j;
+    int i;
+    int j;
+
     for (i = 0; i < n - 1; i++) {
         for (j = 0; j < n - 1 - i; j++) {
             if (arr[j] > arr[j + 1]) {
@@ -107,7 +109,8 @@ void sort_array(int *arr, int n) {
 int scan_alg(int start, int *req, int m, int *order, int direction_up) {
     int n = m - 1;
     int *sorted = (int *)malloc(n * sizeof(int));
-    int i, k = 1;
+    int i = 1;
+    int k = 1;
     int total = 0;
 
     if (sorted == NULL) {
@@ -134,30 +137,28 @@ int scan_alg(int start, int *req, int m, int *order, int direction_up) {
     if (direction_up) {
         /* go up first: from split..n-1 */
         for (i = split; i < n; i++) {
-            order[k] = sorted[i];
-            k++;
+            order[k++] = sorted[i];
         }
+
         /* then go down: from split-1..0 */
         for (i = split - 1; i >= 0; i--) {
-            order[k] = sorted[i];
-            k++;
+            order[k++] = sorted[i];
         }
+
     } else {
         /* go down first: split-1..0 */
         for (i = split - 1; i >= 0; i--) {
-            order[k] = sorted[i];
-            k++;
+            order[k++] = sorted[i];
         }
+
         /* then go up: split..n-1 */
         for (i = split; i < n; i++) {
-            order[k] = sorted[i];
-            k++;
+            order[k++] = sorted[i];
         }
     }
 
-    total += abs(start - 0);
-
     /* compute total distance */
+    total += abs(start - 0);
     for (i = 0; i < m - 1; i++) {
         total += abs(order[i + 1] - order[i]);
     }
@@ -178,7 +179,8 @@ int scan_alg(int start, int *req, int m, int *order, int direction_up) {
 int cscan_alg(int start, int *req, int m, int *order, int direction_up) {
     int n = m - 1;
     int *sorted = (int *)malloc(n * sizeof(int));
-    int i, k = 1;
+    int i;
+    int k = 1;
     int total = 0;
 
     if (sorted == NULL) {
@@ -200,33 +202,28 @@ int cscan_alg(int start, int *req, int m, int *order, int direction_up) {
     }
 
     order[0] = start;
-
     if (direction_up) {
         /* first: from split..n-1 (upward) */
         for (i = split; i < n; i++) {
-            order[k] = sorted[i];
-            k++;
+            order[k++] = sorted[i];
         }
         /* then wrap: from 0..split-1 (upward) */
         for (i = 0; i < split; i++) {
-            order[k] = sorted[i];
-            k++;
+            order[k++] = sorted[i];
         }
+
     } else {
         /* first: from split-1..0 (downward) */
         for (i = split - 1; i >= 0; i--) {
-            order[k] = sorted[i];
-            k++;
+            order[k++] = sorted[i];
         }
         /* then wrap: from n-1..split (downward) */
         for (i = n - 1; i >= split; i--) {
-            order[k] = sorted[i];
-            k++;
+            order[k++] = sorted[i];
         }
     }
 
     total += abs(start - 0);
-
     for (i = 0; i < m - 1; i++) {
         total += abs(order[i + 1] - order[i]);
     }
@@ -238,7 +235,7 @@ int cscan_alg(int start, int *req, int m, int *order, int direction_up) {
 /* ---------- Main / Menu Logic ---------- */
 
 void print_menu(void) {
-    printf("Disk scheduling\n");
+    printf("\nDisk scheduling\n");
     printf("---------------\n");
     printf("1) Enter parameters\n");
     printf("2) Calculate distance to traverse tracks using FIFO\n");
@@ -278,8 +275,10 @@ int main(void) {
             int start;
             int n = seq_size - 1;
             int *requests = (int *)malloc(n * sizeof(int));
-            int *order    = (int *)malloc(seq_size * sizeof(int));
-            int i, direction, dist;
+            int *order = (int *)malloc(seq_size * sizeof(int));
+            int i;
+            int direction
+            int dist;
 
             if (requests == NULL || order == NULL) {
                 printf("Memory allocation failed.\n");
@@ -302,23 +301,26 @@ int main(void) {
             } 
             else if (choice == 3) {
                 dist = sstf(start, requests, seq_size, order);
-            } 
+            }             
             else if (choice == 4) {
                 printf("Enter initial direction: (0=decreasing, 1=increasing): ");
                 scanf("%d", &direction);
                 dist = scan_alg(start, requests, seq_size, order, direction);
             } 
-            else if (choice == 5) {
+            else /* this will be option 5 */ {
                 printf("Enter initial direction: (0=decreasing, 1=increasing): ");
                 scanf("%d", &direction);
                 dist = cscan_alg(start, requests, seq_size, order, direction);
             }
+
             /* common printing for all algorithms 2–5 */
             printf("Traversed sequence: ");
             for (i = 0; i < seq_size; i++) {
                 printf("%d", order[i]);
-                if (i < seq_size - 1) printf(" ");
+                if (i < seq_size - 1) 
+                	printf(" ");
             }
+
             printf("\n");
             printf("The distance of the traversed tracks is: %d\n", dist);
 
