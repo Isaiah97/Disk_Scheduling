@@ -13,7 +13,9 @@ int params_set = 0;			// Flag: have we entered parameters yet?
 
 //helpers that are necessary for the project
 
-
+int abs(int x) {
+	return (x < 0) ? -x : x;
+}
 
 
 
