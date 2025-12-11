@@ -148,6 +148,26 @@ int scan_distance (int direction_up) {
 			}
 		}
 	}
+	else{
+		//moving downward first
+
+		for (i = split - 1; i >= 0; i--) {
+			total_distance += abs(temp[i] - current);
+			current = temp[i];
+		}
+
+		//too many request handling
+
+		if (split < num_requests) {
+			total_distance += abs(current - 0);
+			current = 0;
+
+			for (i = split; i < num_requests; i++) {
+				total_distance += abs(temp[i] - current);
+				current = temp[i];
+			}
+		}
+	}
 }
 
 
