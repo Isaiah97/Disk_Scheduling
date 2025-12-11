@@ -194,6 +194,15 @@ void enter_params(void) {
 		return;
 	}
 
+	printf("Enter number of requests: ");
+	printf("%d", &num_requests);
+
+	if (num_requests <= 0) {
+		printf("Number of requests must be positive.\n");
+		params_set = 0;
+		return;
+	}
+
 	
 
 	// freeing older requests
