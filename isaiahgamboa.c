@@ -223,6 +223,8 @@ int cscan_alg(int start, int *req, int m, int *order, int direction_up) {
         }
     }
 
+    total += abs(start - 0);
+
     for (i = 0; i < m - 1; i++) {
         total += my_abs(order[i + 1] - order[i]);
     }
@@ -294,13 +296,17 @@ int main(void) {
 
             if (choice == 2) {
                 dist = fifo(start, requests, seq_size, order);
-            } else if (choice == 3) {
+
+            } 
+            else if (choice == 3) {
                 dist = sstf(start, requests, seq_size, order);
-            } else if (choice == 4) {
+            } 
+            else if (choice == 4) {
                 printf("Enter initial direction: (0=decreasing, 1=increasing): ");
                 scanf("%d", &direction);
                 dist = scan_alg(start, requests, seq_size, order, direction);
-            } else { /* choice == 5 */
+            } 
+            else { /* choice == 5 */
                 printf("Enter initial direction: (0=decreasing, 1=increasing): ");
                 scanf("%d", &direction);
                 dist = cscan_alg(start, requests, seq_size, order, direction);
@@ -316,12 +322,12 @@ int main(void) {
 
             free(requests);
             free(order);
-        } else if (choice == 6) {
+        } 
+        else if (choice == 6) {
             printf("Quitting program...\n");
             done = 1;
-        } else {
-            /* Ignore invalid options and loop again */
-        }
+        } 
+        
     }
 
     return 0;
