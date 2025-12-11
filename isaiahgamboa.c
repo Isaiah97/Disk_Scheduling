@@ -308,8 +308,8 @@ int main(void) {
                 dist = scan_alg(start, requests, seq_size, order, direction);
             } 
             else /* this will be option 5 */ {
-                printf("Enter initial direction: (0=decreasing, 1=increasing): ");
-                scanf("%d", &direction);
+                //printf("Enter initial direction: (0=decreasing, 1=increasing): ");
+                //scanf("%d", &direction);
                 dist = cscan_alg(start, requests, seq_size, order, direction);
             }
 
