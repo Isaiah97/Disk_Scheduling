@@ -108,7 +108,14 @@ int sstf_distance(void) {
  * direction_up = 0  -> move towards track 0 first
  */
 
+int scan_distance (int direction_up) {
+	int *temp = NULL;
+	int total_distance = 0;
+	int current = start_track;
+	int i, split;
 
+	
+}
 
 
 
