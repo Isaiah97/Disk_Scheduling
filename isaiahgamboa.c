@@ -168,6 +168,15 @@ int scan_distance (int direction_up) {
 			}
 		}
 	}
+
+	temp = (int *)malloc(num_requests * sizeof(int));
+	if (temp == NULL) {
+		printf("Error no memory allocated memory in scan\n");
+		return -1;
+	}
+
+	free(temp);
+	return total_distance;
 }
 
 
