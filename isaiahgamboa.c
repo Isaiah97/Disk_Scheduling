@@ -17,6 +17,11 @@ int abs(int x) {
 	return (x < 0) ? -x : x;
 }
 
+void swap_int(int *a, int *b) {
+	int tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
 
 
 //formatting the parameters for the assignment
@@ -247,8 +252,8 @@ void enter_params(void) {
 
 	params_set = 1;
 	print_current_parameters();
-
 }
+
 
 
 
