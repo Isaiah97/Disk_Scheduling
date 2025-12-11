@@ -331,8 +331,7 @@ int main(void) {
                 	printf(" ");
             }
 
-            printf("\n");
-            printf("The distance of the traversed tracks is: %d\n", dist);
+            printf("\nThe distance of the traversed tracks is: %d\n", dist);
 
             free(requests);
             free(order);
