@@ -203,6 +203,17 @@ void enter_params(void) {
 		return;
 	}
 
+	printf("Enter starting track (0 ... %d): ", disk_size -1);
+	scanf("%d", &start_track);
+
+	if (start_track < 0 || start_track >= disk_size) {
+		printf("Starting track is out of range.\n");
+		if (start_track < 0) 
+			start_track = 0;
+		if (start_track >= disk_size) 
+			start_track = disk_size - 1;
+	}
+
 	
 
 	// freeing older requests
