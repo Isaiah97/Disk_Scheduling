@@ -114,7 +114,11 @@ int scan_distance (int direction_up) {
 	int current = start_track;
 	int i, split;
 
-	
+	//sorting requests
+	for (i = 0; i < num_requests; i++) {
+		temp[i] = requests[i];
+	}
+	sort_array(temp, num_requests);
 }
 
 
