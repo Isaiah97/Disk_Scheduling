@@ -90,7 +90,7 @@ int sstf_distance(void) {
 		int best_index = -1;
 		int best_dist = INT_MAX;
 
-		fot (i = 0; i < num_requests; i++) {
+		for (i = 0; i < num_requests; i++) {
 			if (!visited[i]) {
 				int dist = abs(requests[i] - current);
 				if (dist < best_dist) {
