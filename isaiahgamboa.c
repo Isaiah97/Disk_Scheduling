@@ -352,7 +352,15 @@ void enter_params(void) {
 	print_params();
 }
 
+// main
 
+int main(void) {
+	int choice;
+	int direction;
+	int done = 0;
+
+	
+}
 
 
 
