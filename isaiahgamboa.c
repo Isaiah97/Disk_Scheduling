@@ -42,5 +42,40 @@ for (i = 0; i < num_requests; i++) {
 	printf("\n------------------------\n");
 }
 
+// FIFO logic
+
+int fifo_distance(void){
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
