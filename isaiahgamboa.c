@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <limits.h>
 
-int seq_size = 0;      /* total sequence size m (including starting track) */
-int params_set = 0;    /* did the user enter the size yet? */
+int seq_size = 0;      // total sequence size m (including starting track) 
+int params_set = 0;    // did the user enter the size yet? 
 
-/* Helper: absolute value (use our own to avoid confusion) */
-int my_abs(int x) {
+//Helper class
+
+int abs(int x) {
     return (x < 0) ? -x : x;
 }
 
@@ -21,8 +22,10 @@ int fifo(int start, int *req, int m, int *order) {
         order[i + 1] = req[i];
     }
 
+    total += abs(start - 0);
+
     for (i = 0; i < m - 1; i++) {
-        total += my_abs(order[i + 1] - order[i]);
+        total += abs(order[i + 1] - order[i]);
     }
 
     return total;
@@ -31,9 +34,10 @@ int fifo(int start, int *req, int m, int *order) {
 /* ---------- SSTF ---------- */
 /* At each step, go to the closest unvisited request. */
 int sstf(int start, int *req, int m, int *order) {
-    int n = m - 1;   /* number of requests */
+    int n = m - 1;   // number of requests
     int *visited = (int *)calloc(n, sizeof(int));
-    int i, k;
+    int i, 
+    int k;
     int current = start;
     int total = 0;
 
@@ -43,6 +47,8 @@ int sstf(int start, int *req, int m, int *order) {
     }
 
     order[0] = start;
+
+    total += abs(start - 0);
 
     for (k = 1; k < m; k++) {
         int best_index = -1;
