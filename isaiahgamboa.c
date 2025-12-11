@@ -84,6 +84,7 @@ int sstf_distance(void) {
 	int visited_count = 0;
 	int total_distance = 0;
 	int current = start_track;
+	int dist;
 	int i;
 
 	while (visited_count < num_requests) {
