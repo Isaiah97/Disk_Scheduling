@@ -99,6 +99,15 @@ int sstf_distance(void) {
 	return total_distance;
 }
 
+/*
+ * SCAN :
+ * the head moves in a chosen direction (up or down),
+ * services all requests in that direction, then reverses and
+ * services the remaining ones.
+ * direction_up = 1  -> move towards higher track numbers first
+ * direction_up = 0  -> move towards track 0 first
+ */
+
 
 
 
