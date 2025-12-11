@@ -49,7 +49,12 @@ int fifo_distance(void){
 	int current = start_track;
 	int i;
 
-	
+	for (i = 0; i < num_requests; i++) {
+		total_distance += abs(requests[i] - current);
+		current = requests[i];
+	}
+
+	return total_distance;
 }
 
 
