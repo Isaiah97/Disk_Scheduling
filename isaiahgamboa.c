@@ -210,11 +210,20 @@ void enter_params(void) {
 		printf("Starting track is out of range.\n");
 		if (start_track < 0) 
 			start_track = 0;
+		
 		if (start_track >= disk_size) 
 			start_track = disk_size - 1;
 	}
 
+	requests = (int *)malloc(num_requests * sizeof(int));
+	if (requests == NULL) {
+		printf("Error: could not allocate memory for requests.\n");
+		params_set = 0;
+		return;
+	}
+
 	
+
 
 	// freeing older requests
 	if (requests != NULL) {
