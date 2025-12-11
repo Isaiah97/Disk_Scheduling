@@ -359,7 +359,109 @@ int main(void) {
 	int direction;
 	int done = 0;
 
-	
+	printf("=======================================\n");
+    printf("   Disk Scheduling Simulator (C)       \n");
+    printf("   Algorithms: FIFO, SSTF, SCAN, C-SCAN\n");
+    printf("=======================================\n");
+
+    while (!done) {
+        printf("\nMenu:\n");
+        printf("1) Enter parameters\n");
+        printf("2) Calculate distance using FIFO\n");
+        printf("3) Calculate distance using SSTF\n");
+        printf("4) Calculate distance using SCAN\n");
+        printf("5) Calculate distance using C-SCAN\n");
+        printf("6) Quit program\n");
+        printf("Your choice: ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Exiting.\n");
+            break;
+        }
+
+        switch (choice) {
+            case 1:
+                enter_parameters();
+                break;
+
+            case 2:
+                if (!params_set) {
+                    printf("Please enter parameters first (option 1).\n");
+                } else {
+                    int dist = fifo_distance();
+                    printf("Total distance using FIFO : %d\n", dist);
+                }
+                break;
+
+            case 3:
+                if (!params_set) {
+                    printf("Please enter parameters first (option 1).\n");
+                } else {
+                    int dist = sstf_distance();
+                    if (dist >= 0) {
+                        printf("Total distance using SSTF: %d\n", dist);
+                    }
+                }
+                break;
+
+            case 4:
+                if (!params_set) {
+                    printf("Please enter parameters first (option 1).\n");
+                } else {
+                    printf("SCAN direction? (1 = up to higher tracks, 0 = down): ");
+                    scanf("%d", &direction);
+
+                    if (direction != 0 && direction != 1) {
+                        printf("Invalid direction. Using 1 (up).\n");
+                        direction = 1;
+                    }
+
+                    int dist = scan_distance(direction);
+                    if (dist >= 0) {
+                        printf("Total distance using SCAN: %d\n", dist);
+                    }
+                }
+                break;
+
+            case 5:
+                if (!params_set) {
+                    printf("Please enter parameters first (option 1).\n");
+                } else {
+                    printf("C-SCAN direction? (1 = up to higher tracks, 0 = down): ");
+                    scanf("%d", &direction);
+
+                    if (direction != 0 && direction != 1) {
+                        printf("Invalid direction. Using 1 (up).\n");
+                        direction = 1;
+                    }
+
+                    int dist = cscan_distance(direction);
+                    if (dist >= 0) {
+                        printf("Total distance using C-SCAN: %d\n", dist);
+                    }
+                }
+                break;
+
+            case 6:
+                done = 1;
+                break;
+
+            default:
+                printf("Please choose a valid menu option (1-6).\n");
+                break;
+        }
+    }
+
+    printf("\nExiting program. Freeing memory...\n");
+    if (requests != NULL) {
+        free(requests);
+        requests = NULL;
+    }
+
+    printf("Goodbye!\n");
+    return 0;
+}
+
 }
 
 
