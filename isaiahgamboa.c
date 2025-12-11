@@ -2,488 +2,321 @@
 #include <stdlib.h>
 #include <limits.h>
 
-//need global variables
+int seq_size = 0;      /* total sequence size m (including starting track) */
+int params_set = 0;    /* did the user enter the size yet? */
 
-int disk_size = 0;			// Number of tracks on the disk (tracks are 0 .. disk_size-1)
-int num_requests = 0;		// How many track requests the user gave
-int start_track = 0;		// Starting position of the disk head
-int *requests = NULL;		// Dynamic array of track requests
-int params_set = 0;			// Flag: have we entered parameters yet?
-
-
-//helpers that are necessary for the project
-
-int abs(int x) {
-	return (x < 0) ? -x : x;
+/* Helper: absolute value (use our own to avoid confusion) */
+int my_abs(int x) {
+    return (x < 0) ? -x : x;
 }
 
+/* ---------- FIFO ---------- */
+/* FIFO just follows the input order: start, then the sequence as given. */
+int fifo(int start, int *req, int m, int *order) {
+    int i;
+    int total = 0;
+
+    order[0] = start;
+    for (i = 0; i < m - 1; i++) {
+        order[i + 1] = req[i];
+    }
+
+    for (i = 0; i < m - 1; i++) {
+        total += my_abs(order[i + 1] - order[i]);
+    }
+
+    return total;
+}
+
+/* ---------- SSTF ---------- */
+/* At each step, go to the closest unvisited request. */
+int sstf(int start, int *req, int m, int *order) {
+    int n = m - 1;   /* number of requests */
+    int *visited = (int *)calloc(n, sizeof(int));
+    int i, k;
+    int current = start;
+    int total = 0;
+
+    if (visited == NULL) {
+        printf("Error: could not allocate memory in SSTF.\n");
+        return -1;
+    }
+
+    order[0] = start;
+
+    for (k = 1; k < m; k++) {
+        int best_index = -1;
+        int best_dist = INT_MAX;
+
+        for (i = 0; i < n; i++) {
+            if (!visited[i]) {
+                int d = my_abs(req[i] - current);
+                if (d < best_dist) {
+                    best_dist = d;
+                    best_index = i;
+                }
+            }
+        }
+
+        order[k] = req[best_index];
+        total += best_dist;
+        current = req[best_index];
+        visited[best_index] = 1;
+    }
+
+    free(visited);
+    return total;
+}
+
+/* ---------- Sorting helper for SCAN / C-SCAN ---------- */
+
 void swap_int(int *a, int *b) {
-	int tmp = *a;
-	*a = *b;
-	*b = tmp;
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
 void sort_array(int *arr, int n) {
-	int i;
-	int j;
-
-	for (i = 0; i < n - 1; i++) {
-		for (j = 0; j < n - 1 - i; j++) {
-			if (arr[j] > arr[j + 1]) {
-				swap_int(&arr[j], &arr[j + 1]);
-			}
-		}
-	}
-}
-
-//formatting the parameters for the assignment
-
-void print_params(void) {
-	int i;
-
-printf("\n--- Parameters ---\n");
-printf("Disk size 		: %d (tracks 0 .. %d)\n", disk_size, disk_size - 1);
-printf("Starting track 		: %d\n", start_track);
-printf("Number of requests: %d\n", num_requests);
-printf("Requests 		: ");
-for (i = 0; i < num_requests; i++) {
-	printf("%d", requests[i]);
-	if (i < num_requests - 1) {
-		printf(" , ");	
-	}
-}
-	if (!params_set) {
-		printf("\n No inputs entered.");
-		return;
-
-	}
-
-	printf("\n------------------------\n");
-}
-
-// FIFO distance logic
-
-int fifo_distance(void){
-	int total_distance = 0;
-	int current = start_track;
-	int i;
-
-	for (i = 0; i < num_requests; i++) {
-		total_distance += abs(requests[i] - current);
-		current = requests[i];
-	}
-
-	return total_distance;
-}
-
-
-// SSTF distance logic
-
-int sstf_distance(void) {
-	int *visited = NULL;
-	int visited_count = 0;
-	int total_distance = 0;
-	int current = start_track;
-	int dist;
-	int i;
-
-	while (visited_count < num_requests) {
-		int best_index = -1;
-		int best_dist = INT_MAX;
-
-		for (i = 0; i < num_requests; i++) {
-			if (!visited[i]) {
-				int dist = abs(requests[i] - current);
-				if (dist < best_dist) {
-					best_dist = dist;
-					best_index = i;
-				}
-			}
-		}
-
-		total_distance += dist;
-		current = requests[best_index];
-		visited[best_index] = 1;
-		visited_count++;
-	}
-
-	visited = (int *)calloc(num_requests, sizeof(int));
-	if (visited == NULL) {
-		printf("Error: failure to allocate memory for SSTF");
-		return -1;
-	}
-
-	free(visited);
-	return total_distance;
-}
-
-/*
- * SCAN :
- * the head moves in a chosen direction (up or down),
- * services all requests in that direction, then reverses and
- * services the remaining ones.
- * direction_up = 1  -> move towards higher track numbers first
- * direction_up = 0  -> move towards track 0 first
- */
-
-int scan_distance (int direction_up) {
-	int *temp = NULL;
-	int total_distance = 0;
-	int current = start_track;
-	int i, split;
-
-	//sorting requests
-	for (i = 0; i < num_requests; i++) {
-		temp[i] = requests[i];
-	}
-	sort_array(temp, num_requests);
-
-	//start_track must equal first request
-
-	split = num_requests;
-	for (i = 0; i < num_requests; i++) {
-		if (temp[i] >= start_track) {
-			split = i;
-			break;
-		}
-	}
-
-	if (direction_up) {
-		//moves up
-		for (i = split; i < num_requests; i++) {
-			total_distance += abs(temp[i] - current);
-			current = temp[i];
-		}
-
-		//reverse if requests are too low.
-		if (split > 0) {
-			total_distance += abs((disk_size - 1) - current);
-			current = disk_size - 1;
-
-			for (i = split - 1; i >= 0; i--) {
-				total_distance += abs(temp[i] - current);
-				current = temp[i];
-			}
-		}
-	}
-	else{
-		//moving downward first
-
-		for (i = split - 1; i >= 0; i--) {
-			total_distance += abs(temp[i] - current);
-			current = temp[i];
-		}
-
-		//too many request handling
-
-		if (split < num_requests) {
-			total_distance += abs(current - 0);
-			current = 0;
-
-			for (i = split; i < num_requests; i++) {
-				total_distance += abs(temp[i] - current);
-				current = temp[i];
-			}
-		}
-	}
-
-	temp = (int *)malloc(num_requests * sizeof(int));
-	if (temp == NULL) {
-		printf("Error no memory allocated memory in scan\n");
-		return -1;
-	}
-
-	free(temp);
-	return total_distance;
-}
-
-/*
- * C-SCAN:
- * The head moves only in one direction (up or down).
- * When it reaches the end, it jumps to the other end of the disk
- * and continues in the same direction.
- */
-int cscan_distance (int direction_up) {
-	int *temp = NULL;
-	int total_distance = 0;
-	int current = start_track;
-	int i;
-	int split;
-
-	/* Copy and sort */
-    for (i = 0; i < num_requests; i++) {
-        temp[i] = requests[i];
+    int i, j;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - 1 - i; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap_int(&arr[j], &arr[j + 1]);
+            }
+        }
     }
-    sort_array(temp, num_requests);
+}
 
-    /* Find first request >= start_track */
-    split = num_requests;
-    for (i = 0; i < num_requests; i++) {
-        if (temp[i] >= start_track) {
+/* ---------- SCAN ---------- */
+/*
+ * We treat SCAN as:
+ * - sort the requests
+ * - if direction = increasing:
+ *     go from the closest >= start, up to largest,
+ *     then reverse and go through the smaller ones.
+ * - if direction = decreasing: symmetric.
+ * We only care about the ORDER of requests, not the actual disk ends,
+ * to match the sample's traversed sequence style.
+ */
+int scan_alg(int start, int *req, int m, int *order, int direction_up) {
+    int n = m - 1;
+    int *sorted = (int *)malloc(n * sizeof(int));
+    int i, k = 1;
+    int total = 0;
+
+    if (sorted == NULL) {
+        printf("Error: could not allocate memory in SCAN.\n");
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        sorted[i] = req[i];
+    }
+    sort_array(sorted, n);
+
+    /* find first index with track >= start */
+    int split = n;
+    for (i = 0; i < n; i++) {
+        if (sorted[i] >= start) {
             split = i;
             break;
         }
     }
 
+    order[0] = start;
+
     if (direction_up) {
-        /* Service all requests going up */
-        for (i = split; i < num_requests; i++) {
-            total_distance += abs(temp[i] - current);
-            current = temp[i];
+        /* go up first: from split..n-1 */
+        for (i = split; i < n; i++) {
+            order[k] = sorted[i];
+            k++;
         }
-
-        /* Go to the last track if not already there */
-        if (current != disk_size - 1) {
-            total_distance += abs((disk_size - 1) - current);
-            current = disk_size - 1;
-        }
-
-        /* Jump from end to beginning (count the distance) */
-        total_distance += abs((disk_size - 1) - 0);
-        current = 0;
-
-        /* Service remaining lower requests (from 0 upward) */
-        for (i = 0; i < split; i++) {
-            total_distance += abs(temp[i] - current);
-            current = temp[i];
+        /* then go down: from split-1..0 */
+        for (i = split - 1; i >= 0; i--) {
+            order[k] = sorted[i];
+            k++;
         }
     } else {
-        /* Direction downwards: mirror logic */
-
-        /* Service all going down */
+        /* go down first: split-1..0 */
         for (i = split - 1; i >= 0; i--) {
-            total_distance += abs(temp[i] - current);
-            current = temp[i];
+            order[k] = sorted[i];
+            k++;
         }
-
-        /* Go to track 0 if not already there */
-        if (current != 0) {
-            total_distance += abs(current - 0);
-            current = 0;
-        }
-
-        /* Jump from 0 to last track */
-        total_distance += abs((disk_size - 1) - 0);
-        current = disk_size - 1;
-
-        /* Service remaining higher requests (from end downward) */
-        for (i = num_requests - 1; i >= split; i--) {
-            total_distance += abs(temp[i] - current);
-            current = temp[i];
+        /* then go up: split..n-1 */
+        for (i = split; i < n; i++) {
+            order[k] = sorted[i];
+            k++;
         }
     }
 
-    temp = (int *)malloc(num_requests * sizeof(int));
-    if (temp == NULL) {
+    /* compute total distance */
+    for (i = 0; i < m - 1; i++) {
+        total += my_abs(order[i + 1] - order[i]);
+    }
+
+    free(sorted);
+    return total;
+}
+
+/* ---------- C-SCAN ---------- */
+/*
+ * C-SCAN:
+ * - sort the requests
+ * - if direction = increasing:
+ *     visit all >= start (ascending), then wrap and visit < start (ascending).
+ * - if direction = decreasing:
+ *     visit all <= start (descending), then wrap and visit > start (descending).
+ */
+int cscan_alg(int start, int *req, int m, int *order, int direction_up) {
+    int n = m - 1;
+    int *sorted = (int *)malloc(n * sizeof(int));
+    int i, k = 1;
+    int total = 0;
+
+    if (sorted == NULL) {
         printf("Error: could not allocate memory in C-SCAN.\n");
         return -1;
     }
 
-    free(temp);
-    return total_distance;
+    for (i = 0; i < n; i++) {
+        sorted[i] = req[i];
+    }
+    sort_array(sorted, n);
+
+    int split = n;
+    for (i = 0; i < n; i++) {
+        if (sorted[i] >= start) {
+            split = i;
+            break;
+        }
+    }
+
+    order[0] = start;
+
+    if (direction_up) {
+        /* first: from split..n-1 (upward) */
+        for (i = split; i < n; i++) {
+            order[k] = sorted[i];
+            k++;
+        }
+        /* then wrap: from 0..split-1 (upward) */
+        for (i = 0; i < split; i++) {
+            order[k] = sorted[i];
+            k++;
+        }
+    } else {
+        /* first: from split-1..0 (downward) */
+        for (i = split - 1; i >= 0; i--) {
+            order[k] = sorted[i];
+            k++;
+        }
+        /* then wrap: from n-1..split (downward) */
+        for (i = n - 1; i >= split; i--) {
+            order[k] = sorted[i];
+            k++;
+        }
+    }
+
+    for (i = 0; i < m - 1; i++) {
+        total += my_abs(order[i + 1] - order[i]);
+    }
+
+    free(sorted);
+    return total;
 }
 
-// input menu for user input
+/* ---------- Main / Menu Logic ---------- */
 
-void enter_params(void) {
-	int i;
-	int track;
-
-	// freeing older requests
-	if (requests != NULL) {
-		free(requests);
-		requests = NULL;
-	}
-
-	printf("\nEnter disk size (number of tracks): ");
-	printf("%d", disk_size);
-
-	if (disk_size <= 0){
-		printf("Disk size must be positive.\n");
-		params_set = 0;
-		return;
-	}
-
-	printf("Enter number of requests: ");
-	printf("%d", num_requests);
-
-	if (num_requests <= 0) {
-		printf("Number of requests must be positive.\n");
-		params_set = 0;
-		return;
-	}
-
-	printf("Enter starting track (0 ... %d): ", disk_size -1);
-	scanf("%d", &start_track);
-
-	if (start_track < 0 || start_track >= disk_size) {
-		printf("Starting track is out of range.\n");
-		if (start_track < 0) 
-			start_track = 0;
-		
-		if (start_track >= disk_size) 
-			start_track = disk_size - 1;
-	}
-
-	requests = (int *)malloc(num_requests * sizeof(int));
-	if (requests == NULL) {
-		printf("Error: could not allocate memory for requests.\n");
-		params_set = 0;
-		return;
-	}
-
-	printf("Enter %d track requests (each between 0 and %d):\n", num_requests, disk_size - 1);
-
-	for (i = 0; i < num_requests; i++) {
-		printf("Requests %d: ", i + 1);
-		scanf("%d", &track);
-
-		if (track < 0 || track >= disk_size) {
-			printf(" Out of range, clamping into 0 ... %d.\n", disk_size - 1);
-			if (track < 0)
-				track = 0;
-			if (track >= disk_size)
-				track = disk_size - 1;
-		}
-
-		requests[i] = track;
-	}
-
-	params_set = 1;
-	print_params();
+void print_menu(void) {
+    printf("Disk scheduling\n");
+    printf("---------------\n");
+    printf("1) Enter parameters\n");
+    printf("2) Calculate distance to traverse tracks using FIFO\n");
+    printf("3) Calculate distance to traverse tracks using SSTF\n");
+    printf("4) Calculate distance to traverse tracks using Scan\n");
+    printf("5) Calculate distance to traverse tracks using C-Scan\n");
+    printf("6) Quit program and free memory\n");
 }
-
-// main
 
 int main(void) {
-	int choice;
-	int direction;
-	int done = 0;
-
-	printf("=======================================\n");
-    printf("   Disk Scheduling Simulator (C)       \n");
-    printf("   Algorithms: FIFO, SSTF, SCAN, C-SCAN\n");
-    printf("=======================================\n");
+    int choice;
+    int done = 0;
 
     while (!done) {
-        printf("\nMenu:\n");
-        printf("1) Enter parameters\n");
-        printf("2) Calculate distance using FIFO\n");
-        printf("3) Calculate distance using SSTF\n");
-        printf("4) Calculate distance using SCAN\n");
-        printf("5) Calculate distance using C-SCAN\n");
-        printf("6) Quit program\n");
-        printf("Your choice: ");
-
+        print_menu();
+        printf("Enter selection: ");
         if (scanf("%d", &choice) != 1) {
-            printf("Invalid input. Exiting.\n");
+            printf("Invalid input. Quitting program...\n");
             break;
         }
 
-        switch (choice) {
-            case 1:
-                enter_params();
-                break;
+        if (choice == 1) {
+            printf("Enter size of sequence: ");
+            scanf("%d", &seq_size);
+            if (seq_size <= 1) {
+                printf("Size must be at least 2 (start + at least one request).\n");
+                params_set = 0;
+            } else {
+                params_set = 1;
+            }
+        } else if (choice >= 2 && choice <= 5) {
+            if (!params_set) {
+                printf("Please enter parameters first (option 1).\n");
+                continue;
+            }
 
-            case 2:
-                if (!params_set) {
-                    printf("Please enter parameters first (option 1).\n");
-                } else {
-                    int dist = fifo_distance();
-                    printf("Total distance using FIFO : %d\n", dist);
-                }
-                break;
+            int start;
+            int n = seq_size - 1;
+            int *requests = (int *)malloc(n * sizeof(int));
+            int *order    = (int *)malloc(seq_size * sizeof(int));
+            int i, direction, dist;
 
-            case 3:
-                if (!params_set) {
-                    printf("Please enter parameters first (option 1).\n");
-                } else {
-                    int dist = sstf_distance();
-                    if (dist >= 0) {
-                        printf("Total distance using SSTF: %d\n", dist);
-                    }
-                }
-                break;
+            if (requests == NULL || order == NULL) {
+                printf("Memory allocation failed.\n");
+                free(requests);
+                free(order);
+                continue;
+            }
 
-            case 4:
-                if (!params_set) {
-                    printf("Please enter parameters first (option 1).\n");
-                } else {
-                    printf("SCAN direction? (1 = up to higher tracks, 0 = down): ");
-                    scanf("%d", &direction);
+            printf("Enter starting track: ");
+            scanf("%d", &start);
 
-                    if (direction != 0 && direction != 1) {
-                        printf("Invalid direction. Using 1 (up).\n");
-                        direction = 1;
-                    }
+            printf("Enter sequence of tracks to seek: ");
+            for (i = 0; i < n; i++) {
+                scanf("%d", &requests[i]);
+            }
 
-                    int dist = scan_distance(direction);
-                    if (dist >= 0) {
-                        printf("Total distance using SCAN: %d\n", dist);
-                    }
-                }
-                break;
+            if (choice == 2) {
+                dist = fifo(start, requests, seq_size, order);
+            } else if (choice == 3) {
+                dist = sstf(start, requests, seq_size, order);
+            } else if (choice == 4) {
+                printf("Enter initial direction: (0=decreasing, 1=increasing): ");
+                scanf("%d", &direction);
+                dist = scan_alg(start, requests, seq_size, order, direction);
+            } else { /* choice == 5 */
+                printf("Enter initial direction: (0=decreasing, 1=increasing): ");
+                scanf("%d", &direction);
+                dist = cscan_alg(start, requests, seq_size, order, direction);
+            }
 
-            case 5:
-                if (!params_set) {
-                    printf("Please enter parameters first (option 1).\n");
-                } else {
-                    printf("C-SCAN direction? (1 = up to higher tracks, 0 = down): ");
-                    scanf("%d", &direction);
+            printf("Traversed sequence: ");
+            for (i = 0; i < seq_size; i++) {
+                printf("%d", order[i]);
+                if (i < seq_size - 1) printf(" ");
+            }
+            printf("\n");
+            printf("The distance of the traversed tracks is: %d\n", dist);
 
-                    if (direction != 0 && direction != 1) {
-                        printf("Invalid direction. Using 1 (up).\n");
-                        direction = 1;
-                    }
-
-                    int dist = cscan_distance(direction);
-                    if (dist >= 0) {
-                        printf("Total distance using C-SCAN: %d\n", dist);
-                    }
-                }
-                break;
-
-            case 6:
-                done = 1;
-                break;
-
-            default:
-                printf("Please choose a valid menu option (1-6).\n");
-                break;
+            free(requests);
+            free(order);
+        } else if (choice == 6) {
+            printf("Quitting program...\n");
+            done = 1;
+        } else {
+            /* Ignore invalid options and loop again */
         }
     }
 
-    printf("\nExiting program. Freeing memory...\n");
-    if (requests != NULL) {
-        free(requests);
-        requests = NULL;
-    }
-
-    printf("Goodbye!\n");
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
