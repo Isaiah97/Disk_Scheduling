@@ -310,6 +310,10 @@ int main(void) {
                 printf("Enter starting track: ");
                 scanf("%d", &direction);
                 dist = cscan_alg(start, requests, seq_size, order, direction);
+  
+            printf("Enter sequence of tracks to seek: ")
+            for (i = 0; i < n; i++) {
+                scanf("%d", &requests[i]);
             }
 
             printf("Traversed sequence: ");
@@ -322,6 +326,7 @@ int main(void) {
 
             free(requests);
             free(order);
+        	}
         } 
         else if (choice == 6) {
             printf("Quitting program...\n");
