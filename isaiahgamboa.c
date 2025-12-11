@@ -20,5 +20,16 @@ int params_set = 0;			// Flag: have we entered parameters yet?
 //formatting the parameters for the assignment
 
 void print_params(void) {
-	
+	int i;
+
+printf("\n--- Parameters ---\n");
+printf("Disk size 		: %d (tracks 0 .. %d)\n", disk_size, disk_size - 1);
+printf("Starting track 		: %d\n", start_track);
+printf("Number of requests: %d\n", num_requests);
+printf()
+	if (!params_set) {
+		printf("\n No inputs entered.");
+		return;
+
+	}
 }
