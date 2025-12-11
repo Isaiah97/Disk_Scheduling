@@ -26,10 +26,21 @@ printf("\n--- Parameters ---\n");
 printf("Disk size 		: %d (tracks 0 .. %d)\n", disk_size, disk_size - 1);
 printf("Starting track 		: %d\n", start_track);
 printf("Number of requests: %d\n", num_requests);
-printf()
+printf("Requests 		: ");
+for (i = 0; i < num_requests; i++) {
+	printf("%d", requests[i]);
+	if (i < num_requests - 1) {
+		printf(" , ");	
+	}
+}
 	if (!params_set) {
 		printf("\n No inputs entered.");
 		return;
 
 	}
+
+	printf("\n------------------------\n");
 }
+
+
+
