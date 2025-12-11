@@ -296,7 +296,7 @@ void enter_params(void) {
 	}
 
 	printf("\nEnter disk size (number of tracks): ");
-	printf("%d", &disk_size);
+	printf("%d", disk_size);
 
 	if (disk_size <= 0){
 		printf("Disk size must be positive.\n");
@@ -305,7 +305,7 @@ void enter_params(void) {
 	}
 
 	printf("Enter number of requests: ");
-	printf("%d", &num_requests);
+	printf("%d", num_requests);
 
 	if (num_requests <= 0) {
 		printf("Number of requests must be positive.\n");
