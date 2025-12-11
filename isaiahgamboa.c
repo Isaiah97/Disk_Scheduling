@@ -185,6 +185,12 @@ void enter_params(void) {
 	int i;
 	int track;
 
+	// freeing older requests
+	if (requests != NULL) {
+		free(requests);
+		requests = NULL;
+	}
+
 	printf("\nEnter disk size (number of tracks): ");
 	printf("%d", &disk_size);
 
@@ -222,14 +228,25 @@ void enter_params(void) {
 		return;
 	}
 
-	
+	printf("Enter %d track requests (each between 0 and %d):\n", num_requests, disk_size - 1);
 
+	for (i = 0; i < num_requests; i++) {
+		printf("Requests %d: ", i + 1);
+		scanf("%d", &track);
 
-	// freeing older requests
-	if (requests != NULL) {
-		free(requests);
-		requests = NULL;
+		if (track < 0 || track >= disk_size) {
+			printf(" Out of range, clamping into 0 ... %d.\n", disk_size - 1);
+			if (track < 0)
+				track = 0;
+			if (track >= disk_size)
+				track = disk_size - 1;
+		}
+
+		requests[i] = track;
 	}
+
+	params_set = 1;
+	print_current_parameters();
 
 }
 
