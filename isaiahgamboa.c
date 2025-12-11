@@ -202,7 +202,13 @@ int scan_distance (int direction_up) {
  * When it reaches the end, it jumps to the other end of the disk
  * and continues in the same direction.
  */
-
+int cscan_distance (int direction_up) {
+	int *temp = NULL;
+	int total_distance = 0;
+	int current = start_track;
+	int i;
+	int split;
+}
 
 
 // input menu for user input
@@ -272,7 +278,7 @@ void enter_params(void) {
 	}
 
 	params_set = 1;
-	print_current_parameters();
+	print_params();
 }
 
 
