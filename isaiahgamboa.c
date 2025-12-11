@@ -196,6 +196,15 @@ int scan_distance (int direction_up) {
 	return total_distance;
 }
 
+/*
+ * C-SCAN:
+ * The head moves only in one direction (up or down).
+ * When it reaches the end, it jumps to the other end of the disk
+ * and continues in the same direction.
+ */
+
+
+
 // input menu for user input
 
 void enter_params(void) {
