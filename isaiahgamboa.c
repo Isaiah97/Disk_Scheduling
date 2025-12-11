@@ -94,6 +94,9 @@ int sstf_distance(void) {
 		printf("Error: failure to allocate memory for SSTF");
 		return -1;
 	}
+
+	free(visited);
+	return total_distance;
 }
 
 
