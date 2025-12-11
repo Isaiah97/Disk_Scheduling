@@ -157,7 +157,7 @@ int scan_alg(int start, int *req, int m, int *order, int direction_up) {
 
     /* compute total distance */
     for (i = 0; i < m - 1; i++) {
-        total += my_abs(order[i + 1] - order[i]);
+        total += abs(order[i + 1] - order[i]);
     }
 
     free(sorted);
