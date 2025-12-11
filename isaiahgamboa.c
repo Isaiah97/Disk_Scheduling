@@ -208,7 +208,80 @@ int cscan_distance (int direction_up) {
 	int current = start_track;
 	int i;
 	int split;
+
+	/* Copy and sort */
+    for (i = 0; i < num_requests; i++) {
+        temp[i] = requests[i];
+    }
+    sort_array(temp, num_requests);
+
+    /* Find first request >= start_track */
+    split = num_requests;
+    for (i = 0; i < num_requests; i++) {
+        if (temp[i] >= start_track) {
+            split = i;
+            break;
+        }
+    }
+
+    if (direction_up) {
+        /* Service all requests going up */
+        for (i = split; i < num_requests; i++) {
+            total_distance += abs(temp[i] - current);
+            current = temp[i];
+        }
+
+        /* Go to the last track if not already there */
+        if (current != disk_size - 1) {
+            total_distance += abs((disk_size - 1) - current);
+            current = disk_size - 1;
+        }
+
+        /* Jump from end to beginning (count the distance) */
+        total_distance += abs((disk_size - 1) - 0);
+        current = 0;
+
+        /* Service remaining lower requests (from 0 upward) */
+        for (i = 0; i < split; i++) {
+            total_distance += abs(temp[i] - current);
+            current = temp[i];
+        }
+    } else {
+        /* Direction downwards: mirror logic */
+
+        /* Service all going down */
+        for (i = split - 1; i >= 0; i--) {
+            total_distance += abs(temp[i] - current);
+            current = temp[i];
+        }
+
+        /* Go to track 0 if not already there */
+        if (current != 0) {
+            total_distance += abs(current - 0);
+            current = 0;
+        }
+
+        /* Jump from 0 to last track */
+        total_distance += abs((disk_size - 1) - 0);
+        current = disk_size - 1;
+
+        /* Service remaining higher requests (from end downward) */
+        for (i = num_requests - 1; i >= split; i--) {
+            total_distance += abs(temp[i] - current);
+            current = temp[i];
+        }
+    }
+
+    temp = (int *)malloc(num_requests * sizeof(int));
+    if (temp == NULL) {
+        printf("Error: could not allocate memory in C-SCAN.\n");
+        return -1;
+    }
+
+    free(temp);
+    return total_distance;
 }
+
 
 
 // input menu for user input
