@@ -282,8 +282,6 @@ int cscan_distance (int direction_up) {
     return total_distance;
 }
 
-
-
 // input menu for user input
 
 void enter_params(void) {
