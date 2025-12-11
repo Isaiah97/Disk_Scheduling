@@ -277,7 +277,7 @@ int main(void) {
             int *requests = (int *)malloc(n * sizeof(int));
             int *order = (int *)malloc(seq_size * sizeof(int));
             int i;
-            int direction
+            int direction;
             int dist;
 
             if (requests == NULL || order == NULL) {
