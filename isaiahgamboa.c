@@ -138,6 +138,15 @@ int scan_distance (int direction_up) {
 		}
 
 		//reverse if requests are too low.
+		if (split > 0) {
+			total_distance += abs((disk_size - 1) - current);
+			current = disk_size - 1;
+
+			for (i = split - 1; i >= 0; i--) {
+				total_distance += abs(temp[i] - current);
+				current = temp[i];
+			}
+		}
 	}
 }
 
