@@ -306,7 +306,7 @@ int main(void) {
                 scanf("%d", &direction);
                 dist = scan_alg(start, requests, seq_size, order, direction);
             } 
-            else if{ (choice == 5) {
+            else if (choice == 5) {
                 printf("Enter starting track: ");
                 scanf("%d", &direction);
                 dist = cscan_alg(start, requests, seq_size, order, direction);
