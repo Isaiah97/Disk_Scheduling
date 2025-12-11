@@ -12,3 +12,13 @@ int params_set = 0;			// Flag: have we entered parameters yet?
 
 
 //helpers that are necessary for the project
+
+
+
+
+
+//formatting the parameters for the assignment
+
+void print_params(void) {
+	
+}
